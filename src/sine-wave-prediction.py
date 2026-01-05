@@ -4,6 +4,7 @@ import constants as c
 from layer import Layer
 from activation_sigmoid import Activation_Sigmoid
 from activation_linear import Activation_linear
+from loss_mse import Loss_MSE
 
 
 np.random.seed(0)
@@ -34,8 +35,11 @@ layer_output.forward()
 activation_output = Activation_linear()
 activation_output.forward(layer_output.output)
 
+loss = Loss_MSE()
+loss_ammount = loss.calculate(activation_output.output, y_samples)
+
 plt.scatter(x_samples, y_samples)
 plt.scatter(x_samples, activation_output.output)
 plt.show()
 
-print(activation_output.output.T)
+print(loss_ammount)
