@@ -35,5 +35,7 @@ activation_output = Activation_linear()
 activation_output.forward(layer_output.output)
 
 plt.scatter(x_samples, y_samples)
-#plt.scatter(activation_output.output, y_samples)
+plt.scatter(x_samples, activation_output.output)
 plt.show()
+
+print(activation_output.output.T)
