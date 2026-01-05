@@ -35,11 +35,12 @@ layer_output.forward()
 activation_output = Activation_linear()
 activation_output.forward(layer_output.output)
 
-loss = Loss_MSE()
-loss_ammount = loss.calculate(activation_output.output, y_samples)
+loss = Loss_MSE(activation_output.output, y_samples)
+loss.forward()
+loss.backward()
 
 plt.scatter(x_samples, y_samples)
 plt.scatter(x_samples, activation_output.output)
 plt.show()
 
-print(loss_ammount)
+print(loss.dinputs)
