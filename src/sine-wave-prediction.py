@@ -13,6 +13,7 @@ np.random.seed(0)
 x_samples = np.random.uniform(low = 0.0, high = 2 * np.pi, size = (c.N_SAMPLES, 1))
 y_samples = np.sin(x_samples) + np.random.normal(loc = 0.0, scale = 0.3, size = (c.N_SAMPLES, 1))
 
+# forward pass of the data
 
 layer1 = Layer(x_samples, c.N_NEURONS_L1)
 layer1.forward()
@@ -37,10 +38,13 @@ activation_output.forward(layer_output.output)
 
 loss = Loss_MSE(activation_output.output, y_samples)
 loss.forward()
+
+# backward pass of the data
+
 loss.backward()
+activation_output.backward(loss.d_loss)
+#plt.scatter(x_samples, y_samples)
+#plt.scatter(x_samples, activation_output.output)
+#plt.show()
 
-plt.scatter(x_samples, y_samples)
-plt.scatter(x_samples, activation_output.output)
-plt.show()
-
-print(loss.dinputs)
+print(activation_output.error_signal)

@@ -13,4 +13,4 @@ class Loss_MSE:
     def backward(self):
         delta = self.y_pred - self.y_true
         n = delta.size
-        self.dinputs = delta / n
+        self.d_loss= delta / n
