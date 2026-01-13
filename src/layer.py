@@ -9,6 +9,10 @@ class Layer:
 
     def forward(self):
         self.output = np.dot(self.inputs, self.weights) + self.biases
+    
+    def backward(self, dvalues):
+        # weight values = signal error from right Neuron - activation function output from left neuron
+        pass
 
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
         

@@ -47,4 +47,4 @@ activation_output.backward(loss.d_loss)
 #plt.scatter(x_samples, activation_output.output)
 #plt.show()
 
-print(activation_output.error_signal)
+print(layer3.output.shape)
