@@ -12,6 +12,7 @@ class Layer:
     
     def backward(self, dvalues_es, dvalues_ao):
         self.dweights = np.dot(dvalues_es.T, dvalues_ao)
+        # self.bias TO BE ADDED
 
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
         
