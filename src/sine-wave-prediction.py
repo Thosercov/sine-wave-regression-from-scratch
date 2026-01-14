@@ -43,8 +43,9 @@ loss.forward()
 
 loss.backward()
 activation_output.backward(loss.d_loss)
+layer_output.backward(activation_output.error_signal, activation3.output)
 #plt.scatter(x_samples, y_samples)
 #plt.scatter(x_samples, activation_output.output)
 #plt.show()
 
-print(layer3.output.shape)
+print(layer_output.dweights.shape)

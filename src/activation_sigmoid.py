@@ -6,4 +6,4 @@ class Activation_Sigmoid:
         self.output = 1 / (1 + np.exp(-inputs))
 
     def backward(self, dvalues):
-        self.inputs = dvalues * (1 - dvalues)
+        self.error_signal = dvalues * (1 - dvalues)
