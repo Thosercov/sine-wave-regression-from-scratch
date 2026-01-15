@@ -10,9 +10,9 @@ class Layer:
     def forward(self):
         self.output = np.dot(self.inputs, self.weights) + self.biases
     
-    def backward(self, dvalues_es, dvalues_ao):
-        self.dweights = np.dot(dvalues_es.T, dvalues_ao)
-        # self.bias TO BE ADDED
+    def backward(self, dvalues_es):
+        self.dweights = np.dot(dvalues_es.T, self.inputs) #self.input is the same as Layer N-1 output -> less computation
+        self.dbiases = np.sum(dvalues_es, axis=0)
 
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
         

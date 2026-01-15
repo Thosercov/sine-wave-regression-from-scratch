@@ -43,10 +43,19 @@ loss.forward()
 
 loss.backward()
 activation_output.backward(loss.d_loss)
-layer_output.backward(activation_output.error_signal, activation3.output)
+layer_output.backward(activation_output.error_signal)
+
 activation3.backward(activation_output.error_signal, layer_output.weights)
+layer3.backward(activation3.error_signal)
+
+activation2.backward(activation3.error_signal, layer3.weights)
+layer2.backward(activation2.error_signal)
+
+activation1.backward(activation2.error_signal, layer2.weights)
+layer1.backward(activation1.error_signal)
+
 #plt.scatter(x_samples, y_samples)
 #plt.scatter(x_samples, activation_output.output)
 #plt.show()
 
-print(layer_output.weights)
+print(layer1.dbiases)
