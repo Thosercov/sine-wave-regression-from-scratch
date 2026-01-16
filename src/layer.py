@@ -2,12 +2,12 @@ import numpy as np
 
 class Layer:
     
-    def __init__(self, inputs, n_neurons):
-        self.inputs = inputs
-        self.weights = self.init_weights_xavier_glorot_uniform(self.inputs.shape[1], n_neurons)
+    def __init__(self, n_inputs, n_neurons):
+        self.weights = self.init_weights_xavier_glorot_uniform(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 
-    def forward(self):
+    def forward(self, inputs):
+        self.inputs = inputs
         self.output = np.dot(self.inputs, self.weights) + self.biases
     
     def backward(self, dvalues_es):
