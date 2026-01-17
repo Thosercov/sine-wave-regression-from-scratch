@@ -7,6 +7,7 @@ from activation_linear import Activation_linear
 from loss_mse import Loss_MSE
 from optimizer_sgd import Optimizer_SGD
 from optimizer_sgd_decay import Optimizer_SGD_Decay
+from optimizer_sgd_momentum import Optimizer_SGD_Momentum
 
 np.random.seed(0)
 
@@ -16,6 +17,7 @@ y_samples = np.sin(x_samples) + np.random.normal(loc = 0.0, scale = 0.3, size = 
 
 optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE)
 optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE, c.STEP, c.LEARNING_RATE_DECAY)
+optimizer_sgd_mometum = Optimizer_SGD_Momentum(c.LEARNING_RATE, c.MOMENTUM_BETA)
 
 layer1 = Layer(c.N_FEATURES, c.N_NEURONS_L1)
 layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
@@ -44,7 +46,7 @@ for i in range(c.N_EPOCHS):
     loss = Loss_MSE(activation_output.output, y_samples)
     loss.forward()
 
-    print("Pass: ", i, loss.output)
+    print("Pass: ", i, " Loss: ", loss.output)
 
     # backward pass of the data
 
