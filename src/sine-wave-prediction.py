@@ -65,10 +65,10 @@ for i in range(c.N_EPOCHS):
     activation1.backward(activation2.error_signal, layer2.weights)
     layer1.backward(activation1.error_signal)
 
-    optimizer_adagrad.update_parameters(layer1)
-    optimizer_adagrad.update_parameters(layer2)
-    optimizer_adagrad.update_parameters(layer3)
-    optimizer_adagrad.update_parameters(layer_output)
+    optimizer_sgd_mometum.update_parameters(layer1)
+    optimizer_sgd_mometum.update_parameters(layer2)
+    optimizer_sgd_mometum.update_parameters(layer3)
+    optimizer_sgd_mometum.update_parameters(layer_output)
 
 
 plt.scatter(x_samples, y_samples)
