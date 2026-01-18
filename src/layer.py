@@ -21,9 +21,6 @@ class Layer:
         self.dweights = np.dot(dvalues_es.T, self.inputs).T #self.input is the same as Layer N-1 output -> less computation
         self.dbiases = np.sum(dvalues_es, axis=0)
 
-        print("weights: ", self.weights.shape)
-        print("dweights:" ,self.dweights.shape)
-
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
         
         # Xavier Glorot uniform initialization
