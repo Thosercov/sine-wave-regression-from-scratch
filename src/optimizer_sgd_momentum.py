@@ -12,7 +12,7 @@ class Optimizer_SGD_Momentum:
             layer.dweights_prev = np.zeros(layer.weights.shape)
             layer.dbiases_prev = np.zeros(layer.biases.shape)
 
-        velocity_weights = self.beta * layer.dweights_prev +  self.learning_rate * layer.dweights
+        velocity_weights = self.beta * layer.dweights_prev + self.learning_rate * layer.dweights
         velocity_biases = self.beta * layer.dbiases_prev + self.learning_rate * layer.dbiases
 
         # update weights by subtracting the negative gradients multiplied with learning rate
