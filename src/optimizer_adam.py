@@ -17,7 +17,7 @@ class Optimizer_Adam:
             layer.cache_weights = np.zeros(layer.weights.shape)
             layer.cache_biases = np.zeros(layer.biases.shape)
 
-        layer.weight_momentums = self.beta_1 * layer.weight_momentums +  (1 - self.beta_1) * layer.dweights
+        layer.weight_momentums = self.beta_1 * layer.weight_momentums + (1 - self.beta_1) * layer.dweights
         layer.bias_momentums = self.beta_1 * layer.bias_momentums + (1 - self.beta_1) * layer.dbiases
 
         weight_momentums_corrected = layer.weight_momentums / (1 - self.beta_1 ** (self.iterations + 1))
