@@ -4,6 +4,8 @@ import constants as c
 from layer import Layer
 from activation_sigmoid import Activation_Sigmoid
 from activation_linear import Activation_linear
+from activation_tanh import Activation_TanH
+from activation_relu import Activation_ReLU
 from loss_mse import Loss_MSE
 from optimizer_sgd import Optimizer_SGD
 from optimizer_sgd_decay import Optimizer_SGD_Decay
@@ -30,9 +32,9 @@ layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
 layer3 = Layer(c.N_NEURONS_L2, c.N_NEURONS_L3)
 layer_output = Layer(c.N_NEURONS_L3, c.N_NEURONS_OUTPUT)
 
-activation1 = Activation_Sigmoid()
-activation2 = Activation_Sigmoid()
-activation3 = Activation_Sigmoid()
+activation1 = Activation_ReLU()
+activation2 = Activation_ReLU()
+activation3 = Activation_ReLU()
 activation_output = Activation_linear()
 
 for i in range(c.N_EPOCHS):

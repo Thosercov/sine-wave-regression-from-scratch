@@ -8,7 +8,7 @@ N_NEURONS_L3 = 10
 N_NEURONS_OUTPUT = 1
 
 #training
-N_EPOCHS = 1000
+N_EPOCHS = 10000
 
 # optimizer 
 LEARNING_RATE = 0.01
