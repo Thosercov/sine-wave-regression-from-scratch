@@ -33,9 +33,9 @@ layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
 layer3 = Layer(c.N_NEURONS_L2, c.N_NEURONS_L3)
 layer_output = Layer(c.N_NEURONS_L3, c.N_NEURONS_OUTPUT)
 
-activation1 = Activation_Leaky_ReLU(c.LEAKY_RELU_APLHA)
-activation2 = Activation_Leaky_ReLU(c.LEAKY_RELU_APLHA)
-activation3 = Activation_Leaky_ReLU(c.LEAKY_RELU_APLHA)
+activation1 = Activation_ReLU()
+activation2 = Activation_ReLU()
+activation3 = Activation_ReLU()
 activation_output = Activation_linear()
 
 for i in range(c.N_EPOCHS):

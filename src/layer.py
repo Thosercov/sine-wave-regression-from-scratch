@@ -3,7 +3,7 @@ import numpy as np
 class Layer:
     
     def __init__(self, n_inputs, n_neurons):
-        self.weights = self.init_weights_xavier_glorot_uniform(n_inputs, n_neurons)
+        self.weights = self.init_weights_kaiming_he_uniform(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 
     def forward(self, inputs):
@@ -15,9 +15,20 @@ class Layer:
         self.dbiases = np.sum(dvalues_es, axis=0)
 
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
-        
         # Xavier Glorot uniform initialization
         limit = np.sqrt(6 / (fan_in + fan_out))
+
+        weights = np.random.uniform(
+            low = -limit,
+            high = limit,
+            size = (fan_in, fan_out)
+        )
+
+        return weights
+    
+    def init_weights_kaiming_he_uniform(self, fan_in, fan_out):
+        # Kaiming He uniform initialization
+        limit = np.sqrt(6 / fan_in)
 
         weights = np.random.uniform(
             low = -limit,
