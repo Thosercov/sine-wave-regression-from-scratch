@@ -33,10 +33,12 @@ layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
 layer3 = Layer(c.N_NEURONS_L2, c.N_NEURONS_L3)
 layer_output = Layer(c.N_NEURONS_L3, c.N_NEURONS_OUTPUT)
 
-activation1 = Activation_ReLU()
-activation2 = Activation_ReLU()
-activation3 = Activation_ReLU()
+activation1 = Activation_Sigmoid()
+activation2 = Activation_Sigmoid()
+activation3 = Activation_Sigmoid()
 activation_output = Activation_linear()
+
+loss = Loss_MSE()
 
 for i in range(c.N_EPOCHS):
 
@@ -52,8 +54,9 @@ for i in range(c.N_EPOCHS):
     layer_output.forward(activation3.output)
     activation_output.forward(layer_output.output)
 
-    loss = Loss_MSE(activation_output.output, y_samples)
-    loss.forward()
+    loss.forward(activation_output.output, y_samples)
+    regularization_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
+    total_loss = loss.output + regularization_loss
 
     print("Pass: ", i, " Loss: ", loss.output)
 
