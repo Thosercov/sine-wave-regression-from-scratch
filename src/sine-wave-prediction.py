@@ -64,16 +64,14 @@ for i in range(c.N_EPOCHS):
 
     layer_output.forward(activation3.output)
     activation_output.forward(layer_output.output)
+    y_pred_train = activation_output.output
 
-    training_loss = loss.calculate(activation_output.output, y_train)
-    regularization_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
-    total_training_loss = training_loss + regularization_loss
-
-    if i % 100 == 0:
-        print("Epoch: ", i, " Training loss: ", total_training_loss)
+    training_loss = loss.calculate(y_pred_train, y_train)
+    #regularization_training_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
+    total_training_loss = training_loss #+ regularization_training_loss
 
     # backward pass of the data
-    loss.backward(activation_output.output, y_train)
+    loss.backward(y_pred_train, y_train)
     activation_output.backward(loss.d_loss)
     layer_output.backward(activation_output.error_signal)
 
@@ -91,8 +89,35 @@ for i in range(c.N_EPOCHS):
     optimizer_sgd_momentum.update_parameters(layer3)
     optimizer_sgd_momentum.update_parameters(layer_output)
 
+    # data validation
+    layer1.forward(x_val)
+    activation1.forward(layer1.output)
+
+    layer2.forward(activation1.output)
+    activation2.forward(layer2.output)
+
+    layer3.forward(activation2.output)
+    activation3.forward(layer3.output)
+
+    layer_output.forward(activation3.output)
+    activation_output.forward(layer_output.output)
+    y_pred_val = activation_output.output
+
+    validation_loss = loss.calculate(y_pred_val , y_val)
+    #regularization_validation_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
+    total_validation_loss = validation_loss #+ regularization_validation_loss
+
+    if i % 100 == 0:
+        print("Epoch: ", i)
+        print()
+        print("      Training loss: ", total_training_loss)
+        print("    Validation loss: ", total_validation_loss)
+        print()
 
 
-plt.scatter(x_train, y_train)
-plt.scatter(x_train, activation_output.output)
+
+#plt.scatter(x_train, y_train)
+#plt.scatter(x_train, y_pred_train)
+plt.scatter(x_val, y_val)
+plt.scatter(x_val, y_pred_val)
 plt.show()
