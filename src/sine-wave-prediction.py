@@ -21,6 +21,17 @@ np.random.seed(0)
 x_samples = np.random.uniform(low = 0.0, high = 2 * np.pi, size = (c.N_SAMPLES, 1))
 y_samples = np.sin(x_samples) + np.random.normal(loc = 0.0, scale = 0.3, size = (c.N_SAMPLES, 1))
 
+idx = np.random.permutation(c.N_SAMPLES)
+split = int(0.7 * c.N_SAMPLES)
+
+
+train_idx = idx[:split]
+val_idx   = idx[split:]
+
+x_train, y_train = x_samples[train_idx], y_samples[train_idx]
+x_val,   y_val   = x_samples[val_idx],   y_samples[val_idx]
+
+
 optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE)
 optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE, c.STEP, c.LEARNING_RATE_DECAY)
 optimizer_sgd_momentum = Optimizer_SGD_Momentum(c.LEARNING_RATE, c.MOMENTUM_BETA)
@@ -42,7 +53,7 @@ loss = Loss_MSE()
 
 for i in range(c.N_EPOCHS):
 
-    layer1.forward(x_samples)
+    layer1.forward(x_train)
     activation1.forward(layer1.output)
 
     layer2.forward(activation1.output)
@@ -54,11 +65,12 @@ for i in range(c.N_EPOCHS):
     layer_output.forward(activation3.output)
     activation_output.forward(layer_output.output)
 
-    loss.forward(activation_output.output, y_samples)
+    loss.calculate(activation_output.output, y_train)
     regularization_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
     total_loss = loss.output + regularization_loss
-
-    print("Pass: ", i, " Loss: ", loss.output)
+    
+    if i % 100 == 0:
+        print("Pass: ", i, " Loss: ", loss.output)
 
     # backward pass of the data
 
@@ -81,6 +93,7 @@ for i in range(c.N_EPOCHS):
     optimizer_sgd_momentum.update_parameters(layer_output)
 
 
-plt.scatter(x_samples, y_samples)
-plt.scatter(x_samples, activation_output.output)
+
+plt.scatter(x_train, y_train)
+plt.scatter(x_train, activation_output.output)
 plt.show()

@@ -8,7 +8,6 @@ class Layer:
         
         self.weights = self.init_weights_xavier_glorot_uniform(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
-
         self.weight_lambda_l1 = weight_lambda_l1
         self.weight_lambda_l2 = weight_lambda_l2
         self.bias_lambda_l1 = bias_lambda_l1
@@ -40,7 +39,7 @@ class Layer:
             self.dweights += 2 * self.bias_lambda_l2 * self.weights
 
     def init_weights_xavier_glorot_uniform(self, fan_in, fan_out):
-        # Xavier Glorot uniform initialization
+
         limit = np.sqrt(6 / (fan_in + fan_out))
 
         weights = np.random.uniform(
@@ -51,8 +50,20 @@ class Layer:
 
         return weights
     
+    def init_weights_xavier_glorot_normal(self, fan_in, fan_out):
+
+        std = np.sqrt(2 / (fan_in + fan_out)) # STD DEV = SQRT(VARIANCE)
+
+        weights = np.random.normal(
+            loc=0.0,
+            scale=std, 
+            size=(fan_in, fan_out)
+        )
+
+        return weights
+    
     def init_weights_kaiming_he_uniform(self, fan_in, fan_out):
-        # Kaiming He uniform initialization
+
         limit = np.sqrt(6 / fan_in)
 
         weights = np.random.uniform(
@@ -63,6 +74,17 @@ class Layer:
 
         return weights
 
+    def init_weights_kaiming_he_normal(self, fan_in, fan_out):
+
+        std = np.sqrt(2 / (fan_in)) # STD DEV = SQRT(VARIANCE)
+
+        weights = np.random.normal(
+            loc=0.0,
+            scale=std, 
+            size=(fan_in, fan_out)
+        )
+
+        return weights
 
 
 

@@ -2,10 +2,13 @@ import numpy as np
 
 class Loss_MSE:
 
-    def forward(self, y_prediction, y_true):
+    def calculate(self, y_prediction, y_true):
+
         self.y_pred = y_prediction
         self.y_true = y_true
+
         delta = self.y_pred - self.y_true
+        
         self.output = 0.5 * np.mean(delta ** 2)
     
     def backward(self):
