@@ -65,16 +65,15 @@ for i in range(c.N_EPOCHS):
     layer_output.forward(activation3.output)
     activation_output.forward(layer_output.output)
 
-    loss.calculate(activation_output.output, y_train)
+    training_loss = loss.calculate(activation_output.output, y_train)
     regularization_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
-    total_loss = loss.output + regularization_loss
-    
+    total_training_loss = training_loss + regularization_loss
+
     if i % 100 == 0:
-        print("Pass: ", i, " Loss: ", loss.output)
+        print("Epoch: ", i, " Training loss: ", total_training_loss)
 
     # backward pass of the data
-
-    loss.backward()
+    loss.backward(activation_output.output, y_train)
     activation_output.backward(loss.d_loss)
     layer_output.backward(activation_output.error_signal)
 
