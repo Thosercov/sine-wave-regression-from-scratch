@@ -31,6 +31,15 @@ val_idx   = idx[split:]
 x_train, y_train = x_samples[train_idx], y_samples[train_idx]
 x_val,   y_val   = x_samples[val_idx],   y_samples[val_idx]
 
+# training data normalization
+x_mean, x_std = x_train.mean(), x_train.std()
+y_mean, y_std = y_train.mean(), y_train.std()
+
+x_train_norm = (x_train - x_mean) / x_std
+x_val_norm   = (x_val   - x_mean) / x_std
+
+y_train_norm = (y_train - y_mean) / y_std
+y_val_norm   = (y_val   - y_mean) / y_std
 
 optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE)
 optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE, c.STEP, c.LEARNING_RATE_DECAY)
@@ -51,9 +60,12 @@ activation_output = Activation_linear()
 
 loss = Loss_MSE()
 
+training_losses = []
+validation_losses = []
+
 for i in range(c.N_EPOCHS):
 
-    layer1.forward(x_train)
+    layer1.forward(x_train_norm)
     activation1.forward(layer1.output)
 
     layer2.forward(activation1.output)
@@ -66,12 +78,13 @@ for i in range(c.N_EPOCHS):
     activation_output.forward(layer_output.output)
     y_pred_train = activation_output.output
 
-    training_loss = loss.calculate(y_pred_train, y_train)
+    training_loss = loss.calculate(y_pred_train, y_train_norm)
     #regularization_training_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
     total_training_loss = training_loss #+ regularization_training_loss
+    training_losses.append(total_training_loss)
 
     # backward pass of the data
-    loss.backward(y_pred_train, y_train)
+    loss.backward(y_pred_train, y_train_norm)
     activation_output.backward(loss.d_loss)
     layer_output.backward(activation_output.error_signal)
 
@@ -90,7 +103,7 @@ for i in range(c.N_EPOCHS):
     optimizer_sgd_momentum.update_parameters(layer_output)
 
     # data validation
-    layer1.forward(x_val)
+    layer1.forward(x_val_norm)
     activation1.forward(layer1.output)
 
     layer2.forward(activation1.output)
@@ -103,9 +116,10 @@ for i in range(c.N_EPOCHS):
     activation_output.forward(layer_output.output)
     y_pred_val = activation_output.output
 
-    validation_loss = loss.calculate(y_pred_val , y_val)
+    validation_loss = loss.calculate(y_pred_val , y_val_norm)
     #regularization_validation_loss = loss.regularization_loss(layer1) + loss.regularization_loss(layer2) + loss.regularization_loss(layer3)
     total_validation_loss = validation_loss #+ regularization_validation_loss
+    validation_losses.append(total_validation_loss)
 
     if i % 100 == 0:
         print("Epoch: ", i)
@@ -115,9 +129,37 @@ for i in range(c.N_EPOCHS):
         print()
 
 
+# return data to original format
+y_pred_train_original = y_pred_train * y_std + y_mean
+y_pred_val_original = y_pred_val * y_std + y_mean
 
+# traning data plot
 #plt.scatter(x_train, y_train)
-#plt.scatter(x_train, y_pred_train)
-plt.scatter(x_val, y_val)
-plt.scatter(x_val, y_pred_val)
+#plt.scatter(x_train, y_pred_train_original)
+
+# val data plot
+#plt.scatter(x_val, y_val)
+#plt.scatter(x_val, y_pred_val_original)
+
+# training loss plot
+#plt.plot(range(len(training_losses)), training_losses)
+plt.figure(figsize=(8, 5))
+plt.plot(training_losses, linewidth=2)
+plt.yscale("log")
+plt.xlabel("Epoch")
+plt.ylabel("MSE (log scale)")
+plt.grid(True)
+
+
+# validation loss plot
+#plt.plot(range(len(validation_losses)), validation_losses)
+plt.figure(figsize=(8, 5))
+plt.plot(validation_losses, linewidth=2)
+plt.yscale("log")
+plt.xlabel("Epoch")
+plt.ylabel("MSE (log scale)")
+plt.grid(True)
+
+
 plt.show()
+
