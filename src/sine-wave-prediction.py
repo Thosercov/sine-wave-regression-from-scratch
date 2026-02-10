@@ -22,8 +22,7 @@ x_samples = np.random.uniform(low = 0.0, high = 2 * np.pi, size = (c.N_SAMPLES, 
 y_samples = np.sin(x_samples) + np.random.normal(loc = 0.0, scale = 0.3, size = (c.N_SAMPLES, 1))
 
 idx = np.random.permutation(c.N_SAMPLES)
-split = int(0.7 * c.N_SAMPLES)
-
+split = int(c.TRAINING_DATA_RATIO * c.N_SAMPLES)
 
 train_idx = idx[:split]
 val_idx   = idx[split:]
@@ -41,12 +40,12 @@ x_val_norm   = (x_val   - x_mean) / x_std
 y_train_norm = (y_train - y_mean) / y_std
 y_val_norm   = (y_val   - y_mean) / y_std
 
-optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE)
-optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE, c.STEP, c.LEARNING_RATE_DECAY)
-optimizer_sgd_momentum = Optimizer_SGD_Momentum(c.LEARNING_RATE, c.MOMENTUM_BETA)
-optimizer_adagrad = Optimizer_Adagrad(c.LEARNING_RATE, c.EPSILON)
-optimizer_rmsprop = Optimizer_RMSProp(c.LEARNING_RATE, c.RHO, c.EPSILON)
-optimizer_adam = Optimizer_Adam(c.LEARNING_RATE, c.ADAM_BETA_1, c.ADAM_BETA_2, c.EPSILON)
+optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE_SGD)
+optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE_SGD_W_DECAY, c.STEP, c.LEARNING_RATE_DECAY)
+optimizer_sgd_momentum = Optimizer_SGD_Momentum(c.LEARNING_RATE_MOMENTUM, c.MOMENTUM_BETA)
+optimizer_adagrad = Optimizer_Adagrad(c.LEARNING_RATE_ADAGRAD, c.EPSILON)
+optimizer_rmsprop = Optimizer_RMSProp(c.LEARNING_RATE_RMSPROP, c.RHO, c.EPSILON)
+optimizer_adam = Optimizer_Adam(c.LEARNING_RATE_ADAM, c.ADAM_BETA_1, c.ADAM_BETA_2, c.EPSILON)
 
 layer1 = Layer(c.N_FEATURES, c.N_NEURONS_L1)
 layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
@@ -97,10 +96,10 @@ for i in range(c.N_EPOCHS):
     activation1.backward(activation2.error_signal, layer2.weights)
     layer1.backward(activation1.error_signal)
 
-    optimizer_sgd_momentum.update_parameters(layer1)
-    optimizer_sgd_momentum.update_parameters(layer2)
-    optimizer_sgd_momentum.update_parameters(layer3)
-    optimizer_sgd_momentum.update_parameters(layer_output)
+    optimizer_sgd.update_parameters(layer1)
+    optimizer_sgd.update_parameters(layer2)
+    optimizer_sgd.update_parameters(layer3)
+    optimizer_sgd.update_parameters(layer_output)
 
     # data validation
     layer1.forward(x_val_norm)
@@ -121,7 +120,7 @@ for i in range(c.N_EPOCHS):
     total_validation_loss = validation_loss #+ regularization_validation_loss
     validation_losses.append(total_validation_loss)
 
-    if i % 100 == 0:
+    if i % 2000 == 0:
         print("Epoch: ", i)
         print()
         print("      Training loss: ", total_training_loss)
@@ -133,33 +132,38 @@ for i in range(c.N_EPOCHS):
 y_pred_train_original = y_pred_train * y_std + y_mean
 y_pred_val_original = y_pred_val * y_std + y_mean
 
-# traning data plot
-#plt.scatter(x_train, y_train)
-#plt.scatter(x_train, y_pred_train_original)
 
-# val data plot
-#plt.scatter(x_val, y_val)
-#plt.scatter(x_val, y_pred_val_original)
+traning_data_plot = True
+val_data_plot = False
+training_loss_plot = False
+val_loss_plot = False
 
-# training loss plot
-#plt.plot(range(len(training_losses)), training_losses)
-plt.figure(figsize=(8, 5))
-plt.plot(training_losses, linewidth=2)
-plt.yscale("log")
-plt.xlabel("Epoch")
-plt.ylabel("MSE (log scale)")
-plt.grid(True)
+if traning_data_plot:
+    plt.scatter(x_train, y_train)
+    plt.scatter(x_train, y_pred_train_original)
+
+if val_data_plot:
+    plt.scatter(x_val, y_val)
+    plt.scatter(x_val, y_pred_val_original)
+
+if training_loss_plot:
+    plt.plot(range(len(training_losses)), training_losses)
+    plt.figure(figsize=(8, 5))
+    plt.plot(training_losses, linewidth=2)
+    plt.yscale("log")
+    plt.xlabel("Epoch")
+    plt.ylabel("MSE (log scale)")
+    plt.grid(True)
 
 
-# validation loss plot
-#plt.plot(range(len(validation_losses)), validation_losses)
-plt.figure(figsize=(8, 5))
-plt.plot(validation_losses, linewidth=2)
-plt.yscale("log")
-plt.xlabel("Epoch")
-plt.ylabel("MSE (log scale)")
-plt.grid(True)
-
+if val_loss_plot:
+    plt.plot(range(len(validation_losses)), validation_losses)
+    plt.figure(figsize=(8, 5))
+    plt.plot(validation_losses, linewidth=2)
+    plt.yscale("log")
+    plt.xlabel("Epoch")
+    plt.ylabel("MSE (log scale)")
+    plt.grid(True)
 
 plt.show()
 
