@@ -1,4 +1,4 @@
-class Optimizer_SGD_Decay:
+class Optimizer_BGD_Decay:
 
     def __init__(self, learning_rate, step, learning_rate_decay):
         self.step = step

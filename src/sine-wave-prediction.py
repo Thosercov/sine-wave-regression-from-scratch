@@ -7,9 +7,9 @@ from activation_linear import Activation_linear
 from activation_tanh import Activation_TanH
 from activation_relu import Activation_ReLU
 from loss_mse import Loss_MSE
-from optimizer_sgd import Optimizer_SGD
-from optimizer_sgd_decay import Optimizer_SGD_Decay
-from optimizer_sgd_momentum import Optimizer_SGD_Momentum
+from optimizer_bgd import Optimizer_BGD
+from optimizer_bgd_decay import Optimizer_BGD_Decay
+from optimizer_bgd_momentum import Optimizer_BGD_Momentum
 from optimizer_adagrad import Optimizer_Adagrad
 from optimizer_rmsprop import Optimizer_RMSProp
 from optimizer_adam import Optimizer_Adam
@@ -40,9 +40,9 @@ x_val_norm   = (x_val   - x_mean) / x_std
 y_train_norm = (y_train - y_mean) / y_std
 y_val_norm   = (y_val   - y_mean) / y_std
 
-optimizer_sgd = Optimizer_SGD(c.LEARNING_RATE_SGD)
-optimizer_sgd_decay = Optimizer_SGD_Decay(c.LEARNING_RATE_SGD_W_DECAY, c.STEP, c.LEARNING_RATE_DECAY)
-optimizer_sgd_momentum = Optimizer_SGD_Momentum(c.LEARNING_RATE_MOMENTUM, c.MOMENTUM_BETA)
+optimizer_bgd = Optimizer_BGD(c.LEARNING_RATE_BGD)
+optimizer_bgd_decay = Optimizer_BGD_Decay(c.LEARNING_RATE_BGD_W_DECAY, c.STEP, c.LEARNING_RATE_DECAY)
+optimizer_bgd_momentum = Optimizer_BGD_Momentum(c.LEARNING_RATE_MOMENTUM, c.MOMENTUM_BETA)
 optimizer_adagrad = Optimizer_Adagrad(c.LEARNING_RATE_ADAGRAD, c.EPSILON)
 optimizer_rmsprop = Optimizer_RMSProp(c.LEARNING_RATE_RMSPROP, c.RHO, c.EPSILON)
 optimizer_adam = Optimizer_Adam(c.LEARNING_RATE_ADAM, c.ADAM_BETA_1, c.ADAM_BETA_2, c.EPSILON)
@@ -52,9 +52,9 @@ layer2 = Layer(c.N_NEURONS_L1, c.N_NEURONS_L2)
 layer3 = Layer(c.N_NEURONS_L2, c.N_NEURONS_L3)
 layer_output = Layer(c.N_NEURONS_L3, c.N_NEURONS_OUTPUT)
 
-activation1 = Activation_Sigmoid()
-activation2 = Activation_Sigmoid()
-activation3 = Activation_Sigmoid()
+activation1 = Activation_TanH()
+activation2 = Activation_TanH()
+activation3 = Activation_TanH()
 activation_output = Activation_linear()
 
 loss = Loss_MSE()
@@ -96,10 +96,10 @@ for i in range(c.N_EPOCHS):
     activation1.backward(activation2.error_signal, layer2.weights)
     layer1.backward(activation1.error_signal)
 
-    optimizer_sgd.update_parameters(layer1)
-    optimizer_sgd.update_parameters(layer2)
-    optimizer_sgd.update_parameters(layer3)
-    optimizer_sgd.update_parameters(layer_output)
+    optimizer_adam.update_parameters(layer1)
+    optimizer_adam.update_parameters(layer2)
+    optimizer_adam.update_parameters(layer3)
+    optimizer_adam.update_parameters(layer_output)
 
     # data validation
     layer1.forward(x_val_norm)
@@ -120,12 +120,13 @@ for i in range(c.N_EPOCHS):
     total_validation_loss = validation_loss #+ regularization_validation_loss
     validation_losses.append(total_validation_loss)
 
-    if i % 2000 == 0:
-        print("Epoch: ", i)
+    if i % int(c.N_EPOCHS / 10) == 0:
+        print("Epoch:", i)
         print()
-        print("      Training loss: ", total_training_loss)
-        print("    Validation loss: ", total_validation_loss)
+        print("      Training loss:", round(total_training_loss, 4))
+        print("    Validation loss:", round(total_validation_loss, 4))
         print()
+
 
 
 # return data to original format
@@ -135,35 +136,41 @@ y_pred_val_original = y_pred_val * y_std + y_mean
 
 traning_data_plot = True
 val_data_plot = False
-training_loss_plot = False
-val_loss_plot = False
+loss_plot = False
+
 
 if traning_data_plot:
+    plt.title("Podaci treniranja: stvarne vrijednosti (plavo) / predikcije (narančasto)")
     plt.scatter(x_train, y_train)
     plt.scatter(x_train, y_pred_train_original)
 
+
 if val_data_plot:
+    plt.title("Podaci validacije: stvarne vrijednosti (plavo) / predikcije (narančasto)")
     plt.scatter(x_val, y_val)
     plt.scatter(x_val, y_pred_val_original)
 
-if training_loss_plot:
-    plt.plot(range(len(training_losses)), training_losses)
+
+if loss_plot:
     plt.figure(figsize=(8, 5))
-    plt.plot(training_losses, linewidth=2)
+
+    # Plot trening gubitka
+    plt.plot(training_losses, label="Trening", linewidth=2)
+
+    # Plot validacijski gubitak
+    plt.plot(validation_losses, label="Validacija", linewidth=2)
+
     plt.yscale("log")
-    plt.xlabel("Epoch")
-    plt.ylabel("MSE (log scale)")
+    plt.xlabel("Epoha")
+    plt.ylabel("MSE (logaritmičko skaliranje)")
     plt.grid(True)
+    plt.title("Funkcija gubitka kroz vrijeme")
+    plt.legend()  # za oznake linija
 
 
-if val_loss_plot:
-    plt.plot(range(len(validation_losses)), validation_losses)
-    plt.figure(figsize=(8, 5))
-    plt.plot(validation_losses, linewidth=2)
-    plt.yscale("log")
-    plt.xlabel("Epoch")
-    plt.ylabel("MSE (log scale)")
-    plt.grid(True)
 
 plt.show()
+
+
+
 

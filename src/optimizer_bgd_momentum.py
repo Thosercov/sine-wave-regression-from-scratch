@@ -1,5 +1,5 @@
 import numpy as np
-class Optimizer_SGD_Momentum:
+class Optimizer_BGD_Momentum:
 
     def __init__(self, learning_rate, beta):
         self.learning_rate = learning_rate
